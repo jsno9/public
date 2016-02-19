@@ -1,0 +1,14 @@
+ffmpeg \
+-f x11grab \
+-s 1920x1080 \
+-r 10 \
+-i :0.0+0+0 \
+-qscale 0.01  \
+-map 0 \
+-codec:v libx264 \
+-codec:a libfaac \
+-f ssegment \
+-segment_list playlist.m3u8 \
+-segment_list_flags +live \
+-segment_wrap 10 \
+-segment_time 10 out%03d.ts
