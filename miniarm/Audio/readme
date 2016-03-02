@@ -99,3 +99,22 @@ sound/soc/generic/simple-card:
 	{},
 	
 
+debug:
+play by headphone:
+#aplay -Dhw:0,0 -r8000 -f cd path/x.wav
+play by spdif:
+#aplay -Dhw:1,0 -r8000 -f cd path/x.wav
+record from mic:
+#arecord -Dhw:0,0 -r8000 -f cd /home/2.wav
+
+
+
+
+
+
+
+
+
+
+
+
