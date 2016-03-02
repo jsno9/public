@@ -763,10 +763,25 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&spdif_tx>;
 		rockchip,grf = <&grf>;
+		//status = "disabled";
 		status = "okay";
+
+
 	};
 
 
+	spdif_out: spdif-out {
+		compatible = "linux,spdif-dit";
+		#sound-dai-cells = <0>;
+	};
+
+/*
+sound { 
+	compatible = "rockchip,rockchip-audio-nau8825";
+	rockchip,model = "ROCKCHIP-I2S";
+	rockchip,i2s-controller = <&i2s>;
+	rockchip,audio-codec = <&headset>; 
+};*/
 
 sound {
 		compatible = "simple-audio-card";
@@ -777,9 +792,11 @@ sound {
 			"Microphone", "Microphone Jack",
 			"Headphone", "Headphone Jack";
 		simple-audio-card,routing =
-			"MIC1", "Microphone Jack",
-			"MIC2", "Microphone Jack",
-			"Microphone Jack", "micbias1",
+			//"MIC1", "Microphone Jack",
+			//"MIC2", "Microphone Jack",
+			"MIC", "Microphone Jack",
+			//"Microphone Jack", "micbias1",
+			//"Microphone Jack", "micbias",
 			"Headphone Jack", "HPOL",
 			"Headphone Jack", "HPOR";
 
@@ -790,8 +807,20 @@ sound {
 		simple-audio-card,codec {
 			sound-dai = <&headset>;
 		};
+
+
 	}; 
 
+
+sound1 {
+		compatible = "simple-audio-card1";
+		
+		simple-audio-card,name = "SPDIF";
+		simple-audio-card,dai-link@1 {  /* S/PDIF - S/PDIF */
+			cpu { sound-dai = <&spdif>; };
+			codec { sound-dai = <&spdif_out>; };
+		};
+	};
 
 
 	i2s: i2s@ff890000 {
@@ -799,8 +828,8 @@ sound {
 		reg = <0xff890000 0x10000>;
 		interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
 		#address-cells = <1>;
-		#sound-dai-cells = <0>;
 		#size-cells = <0>;
+		#sound-dai-cells = <0>;
 		dmas = <&dmac_bus_s 0>, <&dmac_bus_s 1>;
 		dma-names = "tx", "rx";
 		clock-names = "i2s_hclk", "i2s_clk";
@@ -809,6 +838,7 @@ sound {
 		pinctrl-0 = <&i2s0_bus>;
 		rockchip,playback-channels = <8>;
 		rockchip,capture-channels = <2>;
+		//status = "disabled";
 		status = "okay";
 	};
 

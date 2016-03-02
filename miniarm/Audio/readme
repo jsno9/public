@@ -32,8 +32,25 @@ sound {
 		};
 	}; 
 
+spdif:status = <okay>
+
 i2s:status = <okay>
 	#sound-dai-cells = <0>;
+
+spdif_out: spdif-out {
+		compatible = "linux,spdif-dit";
+		#sound-dai-cells = <0>;
+	};
+
+sound1 {
+		compatible = "simple-audio-card1";
+		
+		simple-audio-card,name = "SPDIF";
+		simple-audio-card,dai-link@1 {  /* S/PDIF - S/PDIF */
+			cpu { sound-dai = <&spdif>; };
+			codec { sound-dai = <&spdif_out>; };
+		};
+	};
 	
 
 rk3288-miniarm.dtsi:
@@ -73,5 +90,12 @@ rk3288-miniarm.dtsi:
 
 			
   };
-};	
+};
+
+sound/soc/generic/simple-card:
+	static const struct of_device_id asoc_simple_of_match[] = {
+	{ .compatible = "simple-audio-card", },
+	{ .compatible = "simple-audio-card1", },
+	{},
+	
 
