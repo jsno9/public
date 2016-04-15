@@ -1,0 +1,9 @@
+[Unit]
+Description=bluetooth supplicant
+
+[Service]
+ExecStart=/sbin/bluetoothstart
+
+[Install]
+WantedBy=multi-user.target
+
