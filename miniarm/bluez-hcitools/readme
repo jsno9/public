@@ -1,0 +1,29 @@
+hardware:miniarm
+soc:rk3288
+kernel:linux4.4
+os:debian jessie
+bluetooth chip:realtek rtl8723bs
+
+第一步：添加内核编译模块
+#vi $PARTH/kernel/arch/arm/configs/miniarm_defconfig
++ CONFIG_BT_HCIUART_3WIRE=y
++ CONFIG_BT_RFCOMM_TTY=y
+
+第二步：下载rtl8723bs有关的bluez tool
+root@miniarm: 
+	#git clone https://github.com/22ktv/bluez-hcitools.git
+	把附件中start_bt.sh和inithci.sh放入到bluez-hcitools文件夹下
+	#make
+	#make install
+	#./start_bt.sh
+	#./inithci.sh
+	#apt-get install blueman bluez
+	#bluetoothctl
+开始使用bluetooth了。
+
+
+注意：start_bt.sh中
+/dev/ttyS0是蓝牙与soc连接的串口uart0。
+如果换成其他的板子，需要根据具体硬件填写。
+同样的gpio149也是miniarm上使能bluetooth的引脚
+
