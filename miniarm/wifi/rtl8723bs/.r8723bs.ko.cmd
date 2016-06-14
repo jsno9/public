@@ -1,0 +1,1 @@
+cmd_/home/jason/study/rockchip/tool/wifi/rtl8723bs/r8723bs.ko := arm-linux-gnueabi-ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/jason/study/rockchip/tool/wifi/rtl8723bs/r8723bs.ko /home/jason/study/rockchip/tool/wifi/rtl8723bs/r8723bs.o /home/jason/study/rockchip/tool/wifi/rtl8723bs/r8723bs.mod.o

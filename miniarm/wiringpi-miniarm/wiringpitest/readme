@@ -1,0 +1,11 @@
+#use hardware pwm
+func:		void asus_pwm_start(int pwm_ch,int mode,int range,int duty);
+parameter：		pwm_ch:pwm chanel 0,1,2,3
+				mode:center 1
+					 left	0
+				range:set pwm period (0~0xffffffff)
+				duty:set pwm duty (0~0xffffffff)
+note:if you want tu use  asus_pwm_start(),please use pinMode() to set the pin's mode to PWM_OUTPUT first
+
+func:	void asus_pwm_stop(int pwm_ch)
+parameter：		pwm_ch:pwm chanel 0,1,2,3
