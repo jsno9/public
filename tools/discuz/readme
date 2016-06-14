@@ -1,0 +1,36 @@
+discuz:
+sudo apt-get update
+sudo apt-get install apache2
+sudo apt-get install mysql-server libapache2-mod-auth-mysql php5-mysql
+sudo mysql_install_db
+sudo apt-get install php5 libapache2-mod-php5 php5-mcrypt
+sudo nano /etc/apache2/mods-enabled/dir.conf
+<IfModule mod_dir.c>
+
+          DirectoryIndex index.php index.html index.cgi index.pl index.php index.xhtml index.htm
+
+</IfModule>
+下载Discuz_X3.2_SC_UTF8.zip
+#unzip Discuz_X3.2_SC_UTF8.zip -d /root
+将upload内容复制到/var/www/html目录下
+cd /var/www/html
+mkdir forum
+cp -a /var/www/html/upload/* /var/www/html/forum
+chmod -R 777 /var/www/html/forum/
+在浏览器输入/var/www/html/forum/install
+
+参考网站
+安装服务：https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu
+部署模板：http://blog.itpub.net/27771627/viewspace-1250701/
+
+
+
+404页面：
+source\module\forum\forum_viewthread.php中
+showmessage(‘thread_nonexistence’);
+替换为：
+header('HTTP/1.1 404 Not Found');
+header('status: 404 Not Found');
+include("404/index.html");
+exit();
+404/index.html为路径

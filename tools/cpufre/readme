@@ -1,0 +1,121 @@
+一、gtk，glade环境配置
+#sudo apt-get install build-essential
+#sudo apt-get install gnome-core-devel
+#sudo apt-get install pkg-config
+#sudo apt-get install devhelp
+#sudo apt-get install libglib2.0-doc libgtk2.0-doc
+#sudo apt-get install glade libglade2-dev
+
+二、helloworld
+#vi hello.c
+
+//////////////////hello.c////////////
+#include <gtk/gtk.h>
+#include "stdlib.h"
+void hello( GtkWidget *widget,
+            gpointer   data )
+{
+    g_print ("Hello World\n");
+}
+
+gint delete_event( GtkWidget *widget,
+                   GdkEvent  *event,
+     gpointer   data )
+{
+    exit(0);
+}
+
+void destroy( GtkWidget *widget,
+              gpointer   data )
+{
+    gtk_main_quit ();
+}
+
+int main( int   argc,
+          char *argv[] )
+{
+    GtkWidget *window;
+    GtkWidget *button;
+    
+    gtk_init (&argc, &argv);
+    window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    
+    g_signal_connect (G_OBJECT (window), "delete_event",
+        G_CALLBACK (delete_event), NULL);
+    
+    g_signal_connect (G_OBJECT (window), "destroy",
+        G_CALLBACK (destroy), NULL);
+    
+    gtk_container_set_border_width (GTK_CONTAINER (window), 10);
+    
+    button = gtk_button_new_with_label ("Hello World");
+    
+    g_signal_connect (G_OBJECT (button), "clicked",
+        G_CALLBACK (hello), NULL);
+    
+    g_signal_connect_swapped (G_OBJECT (button), "clicked",
+         G_CALLBACK (gtk_widget_destroy),
+                              window);
+    
+    gtk_container_add (GTK_CONTAINER (window), button);
+    
+    gtk_widget_show (button);
+    gtk_widget_show (window);
+    
+    gtk_main ();
+    
+    return 0;
+}
+//////////////////hello.c////////////
+
+#vi makefile
+/////////////makefile//////////
+	CC = gcc
+all:
+	$(CC) -Wall -g -ohello hello.c `pkg-config --cflags --libs gtk+-2.0 gthread-2.0` -export-dynamic
+clean:
+	rm -f hello
+/////////////makefile//////////
+以上是使用gtk做出图形化界面的helloworld
+
+
+
+
+三、使用glade做出图形化界面，结合gtk lib做一个cpu monitor&governor
+#glade
+根据需求做出相应的图形化界面
+save cpufre.glade
+#vi cpufre.glade
+删除 <requires lib="xxxx" version="xxx"/>这一行
+#vi cpufre.c
+代码见附件
+#vi makefile
+#sudo make
+#sudo ./cpufre
+
+
+//////////////////////
+
+//////////////////////
+代码
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
