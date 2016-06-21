@@ -1,0 +1,176 @@
+//////////aboot.c+++++++++++++++++//////////////////
+void cmd_oem_get_data(const char *arg, void *data, unsigned sz)
+{
+	uint64_t addr;
+	uint64_t index,ptn;
+	uint64_t hahasize;
+	unsigned char *haha=malloc(8192);
+	char *ptname=NULL;
+	char *token=NULL;
+	char *sp;
+	int hahacount;
+	dprintf(INFO, "%s\n",arg);
+
+	ptname = strtok_r((char *)arg, " ", &sp);
+	token = strtok_r(NULL, " ",&sp);
+	
+	addr=atoi(token);
+	dprintf(INFO, "@name=%s,addr=0x%llx\n",ptname,addr);
+	index = partition_get_index(ptname);
+	if(index==0)
+	{
+		fastboot_fail("ERROR:Partition table not foun\n");
+		return;
+	}
+	ptn = partition_get_offset(index);
+	if(!ptn)
+	{
+		fastboot_fail("ERROR:Invalid partition name\n");
+		return;
+	}
+	hahasize=partition_get_size(index);
+	dprintf(INFO,"size=%llx\n",hahasize);
+	//mmc_read(uint64_t data_addr,uint32_t * out,uint32_t data_len)
+	if(mmc_read(ptn+addr,(uint32_t *)haha,4096))
+	{
+		fastboot_fail("ERROR:read failed\n");
+		return;
+	}
+	for(hahacount=0;hahacount<4096;hahacount=hahacount+16)
+	{
+		
+		dprintf(INFO,	"[%llx] %02x %02x %02x %02x %02x %02x %02x %02x "
+						"%02x %02x %02x %02x %02x %02x %02x %02x\n",
+													addr+hahacount,
+													haha[hahacount], 
+													haha[hahacount+1], 
+													haha[hahacount+2], 
+													haha[hahacount+3], 
+													haha[hahacount+4], 
+													haha[hahacount+5], 
+													haha[hahacount+6], 
+													haha[hahacount+7],
+													haha[hahacount+8], 
+													haha[hahacount+9], 
+													haha[hahacount+10], 
+													haha[hahacount+11], 
+													haha[hahacount+12], 
+													haha[hahacount+13], 
+													haha[hahacount+14], 
+													haha[hahacount+15]
+			);
+	}
+	free(haha);
+	fastboot_okay("");
+}
+
+void cmd_oem_md5(const char *arg, void *data, unsigned sz)
+{
+	uint64_t index,ptn;
+	uint64_t hahasize;
+	unsigned char *haha=malloc(0x100000+1000);
+	char *ptname=NULL;
+	char *sp;
+	uint64_t i;
+    unsigned char decrypt[16]; 
+	MD5_CTX md5;
+	MD5Init(&md5); 
+	dprintf(INFO, "%s\n",arg);
+	ptname = strtok_r((char *)arg, " ", &sp);	
+	dprintf(INFO, "@name=%s\n",ptname);
+	index = partition_get_index(ptname);
+	if(index==0)
+	{
+		fastboot_fail("ERROR:Partition table not foun\n");
+		return;
+	}
+	ptn = partition_get_offset(index);
+	if(!ptn)
+	{
+		fastboot_fail("Invalid partition name\n");
+		return;
+	}
+	hahasize=partition_get_size(index);
+	dprintf(INFO,"size=%llx\n",hahasize);
+	for(i=0;i<hahasize;i=i+0x100000)
+	{
+		if(mmc_read(ptn+i,(uint32_t *)haha,0x100000))
+		{
+			fastboot_fail("ERROR:read failed\n");
+			return;
+		}
+		MD5Update(&md5,haha,0x100000);
+		
+	}
+	MD5Final(&md5,decrypt);
+	dprintf(INFO,	"%02x%02x%02x%02x%02x%02x%02x%02x"
+						"%02x%02x%02x%02x%02x%02x%02x%02x\n",											
+													decrypt[0], 
+													decrypt[1], 
+													decrypt[2], 
+													decrypt[3], 
+													decrypt[4], 
+													decrypt[5], 
+													decrypt[6], 
+													decrypt[7],
+													decrypt[8], 
+													decrypt[9], 
+													decrypt[10], 
+													decrypt[11], 
+													decrypt[12], 
+													decrypt[13], 
+													decrypt[14], 
+													decrypt[15]
+			);
+	free(haha);
+	fastboot_okay("");
+}
+
+void cmd_oem_erase(const char *arg, void *data, unsigned sz)
+{
+	uint64_t index=INVALID_PTN;
+	uint64_t ptn;
+	uint64_t hahasize;
+	unsigned char *haha=malloc(0x100000);
+	char *ptname=NULL;
+	char *sp;
+	uint64_t i; 
+	dprintf(INFO, "%s\n",arg);
+
+	ptname = strtok_r((char *)arg, " ", &sp);
+	
+	dprintf(INFO, "@name=%s\n",ptname);
+	index = partition_get_index(ptname);
+	if(index==0)
+	{
+		fastboot_fail("ERROR:Partition table not foun\n");
+		return;
+	}
+	ptn = partition_get_offset(index);
+	if(!ptn)
+	{
+		fastboot_fail("Invalid partition name\n");
+		return;
+	}
+	hahasize=partition_get_size(index);
+	dprintf(INFO,"size=%llx\n",hahasize);
+	//mmc_read(uint64_t data_addr,uint32_t * out,uint32_t data_len)
+	for(i=0;i<0x100000;i++)
+	{
+		haha[i]=0;
+	}
+	for(i=0;i<hahasize;i=i+0x100000)
+	{
+		if(mmc_write(ptn+i,0x100000,(unsigned char *)haha))
+		{
+			fastboot_fail("ERROR:write failure");
+			return;
+		}
+				
+	}
+	free(haha);
+	fastboot_okay("");
+
+}
+
+
