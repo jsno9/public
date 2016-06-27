@@ -1,0 +1,4 @@
+gcc strtoi.c -fPIC -shared -o libstr.so
+gcc fileread.c -L. -lstr -o fileread
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
+ldd fileread
