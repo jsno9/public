@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>		//log
+#include <stdarg.h>		//loge
 
 #include<fcntl.h>		//	open
 #include<unistd.h>		//	close
@@ -58,7 +58,7 @@ static int height=512;
 
 
 
-void log(const char *format, ...)
+void loge(const char *format, ...)
 {
     va_list arg;
 
@@ -129,14 +129,9 @@ int keyboardevent()
 void init()
 {
 	int size=4*0x400000;
-	pthread_t keythread;
 	rawspace=malloc(size+0x1000);	
 
-	signal=tcgetattr(STDIN_FILENO,&old);
-	new=old;
-	new.c_lflag&=~(ICANON|ECHO);
-	tcsetattr(STDIN_FILENO,TCSANOW,&new);
-	fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK);
+	
 	
 
 	ev.data.fd=STDIN_FILENO;
@@ -157,27 +152,27 @@ void windowcreate()
 	fb=open("/dev/fb0",O_RDWR);
 	if(fb<0)
 	{
-		    log("can not open /dev/fb0\n");
+		    loge("can not open /dev/fb0\n");
 		    exit(-1);
 	}
 	
 	struct fb_fix_screeninfo finfo;
 	if(ioctl(fb,FBIOGET_FSCREENINFO,&finfo))
 	{
-		log("can not get finfo!\n");
+		loge("can not get finfo!\n");
 		exit(-1);
 	}
 	
 	fbaddr=finfo.smem_start;
 	fbtotalbyte=finfo.smem_len;
 	fboneline=finfo.line_length;
-	log("fbaddr=0x%llx,fbtotalbyte=0x%x,fboneline=0x%x\n"
+	loge("fbaddr=0x%llx,fbtotalbyte=0x%x,fboneline=0x%x\n"
 		,fbaddr,fbtotalbyte,fboneline);
 	
 	struct fb_var_screeninfo vinfo;
 	if(ioctl(fb,FBIOGET_VSCREENINFO,&vinfo))
 	{
-		log("can not get vinfo\n");
+		loge("can not get vinfo\n");
 		exit(-1);
 	}
 
@@ -185,6 +180,12 @@ void windowcreate()
 	ymax=vinfo.yres;
 	bpp=vinfo.bits_per_pixel;
 	printf("xmax=%d,ymax=%d,bpp=%d\n",xmax,ymax,bpp);
+
+	signal=tcgetattr(STDIN_FILENO,&old);
+	new=old;
+	new.c_lflag&=~(ICANON|ECHO);
+	tcsetattr(STDIN_FILENO,TCSANOW,&new);
+	fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK);
 	
 	
 
@@ -242,7 +243,7 @@ void updatepanel(int type)
 	int i;
 	for(i=0;i<width*height*bpp/8;i=i+4)
 	{
-		//log("for\n");
+		//loge("for\n");
 		if(type==up_key)
 		{
 			if((pixbuf[i]+4)<=0xff)
@@ -307,7 +308,7 @@ void windowdelete()
 
 void main()
 {
-	log("hello world\n");
+	loge("hello world\n");
 	int i,j,type;
 	init();
 	windowcreate(); 
@@ -316,7 +317,7 @@ void main()
 
 	for(i=0;i<width*height*bpp/8;i=i+4)
 	{
-		//log("for\n");
+		//loge("for\n");
 		pixbuf[i]=0;
 		pixbuf[i+1]=0;
 		pixbuf[i+2]=0;
@@ -338,7 +339,7 @@ void main()
 		
 	}
 	windowdelete();
-	log("end\n");
+	loge("end\n");
 }
 
 
