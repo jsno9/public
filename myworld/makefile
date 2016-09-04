@@ -1,3 +1,4 @@
 all:
 	make -C console
-	gcc main.c console/console.o
+	make -C event
+	gcc main.c console/console.o console/consolefb.o event/event.o event/eventepoll.o
