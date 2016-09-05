@@ -6,8 +6,8 @@
 #include <malloc.h>
 
 #define CONSOLEMEMBER 10
-//void fb_create(struct console *con);
 static struct console *conregister[CONSOLEMEMBER];
+
 struct console *consoleinit(struct console *con)
 {	
 	
