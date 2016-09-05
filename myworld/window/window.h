@@ -5,9 +5,11 @@ struct window{
 	unsigned int id;
 	void (*init)();
 	void (*uninit)();
+	void (*write)(struct window *);
 	char* screenbuf;
 	int width;
 	int height;
+	int bpp;
 
 };
 
