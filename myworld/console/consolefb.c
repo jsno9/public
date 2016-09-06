@@ -13,6 +13,7 @@ static void init()
 	signal=tcgetattr(STDIN_FILENO,&bak);
 	local=bak;
 	local.c_lflag&=~(ICANON|ECHO);
+	//local.c_lflag|=(ICANON|ECHO);
 	tcsetattr(STDIN_FILENO,TCSANOW,&local);
 	fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK);
 

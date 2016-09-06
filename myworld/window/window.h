@@ -3,13 +3,13 @@
 	
 struct window{
 	unsigned int id;
-	void (*init)();
+	void (*init)(struct window *);
 	void (*uninit)();
 	void (*write)(struct window *);
 	char* screenbuf;
-	int width;
-	int height;
-	int bpp;
+	int* width;
+	int* height;
+	int* bpp;
 
 };
 

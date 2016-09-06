@@ -4,14 +4,18 @@
 #include <malloc.h>
 
 #define WINDOWMEMBER 10
-struct window *winregister[WINDOWMEMBER];
+static struct window *winregister[WINDOWMEMBER];
 
 
 struct window *windowinit(struct window *win)
 {
+
 	int i;
+
+loge("window init \n");
+
 	winregister[0]=(struct window *)malloc(sizeof(struct window));	
-	//fb_create(conregister[0]);
+	winfb_create(winregister[0]);
 
 	for(i=0;i<WINDOWMEMBER;i++)
 	{
@@ -22,8 +26,9 @@ struct window *windowinit(struct window *win)
 			break;
 		}
 	}
-	
-	win->init();
+
+	loge("window init end\n");
+	win->init(win);
 	return win;
 }
 
