@@ -10,6 +10,9 @@
 #define down_key 0x42
 #define right_key 0x43
 #define left_key 0x44
+#define plus_key 0x2b
+#define sub_key 0x2d
+
 
 struct event{
 	unsigned int id;

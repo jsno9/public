@@ -536,3 +536,113 @@ void printascii(struct window *win,int xxxx, int yyyy, int size, char ch, unsign
 	}//y
 }
 
+void printbyte(struct window *win,int x, int y, int size, unsigned char ch, unsigned int fg, unsigned int bg)
+{
+	int i;
+	unsigned char temp=ch;
+
+	ch=(temp>>4) & 0xf;
+	ch+=0x30;
+	if(ch>0x39)ch+=0x7;
+	printascii(win,x, y, size, ch, 0, 0);
+
+	ch=temp & 0xf;
+	ch+=0x30;
+	if(ch>0x39)ch+=0x7;
+	printascii(win,x + size*8, y, size, ch, 0, 0);
+}
+
+
+
+
+void printstring(struct window *win,int x, int y, int size, char* p, unsigned int fgcolor, unsigned int bgcolor)
+{
+	int j=0;
+
+	size &= 0x7;
+	if(size==0)size=1;
+
+	while(1)
+	{
+		if(*p == 0x00 )break;
+		if( j >= 0x80 )break;
+
+		printascii(win,x+j*size*8, y, size, *p, fgcolor, bgcolor);
+		j++;
+		p++;
+	}
+}
+
+
+
+
+void printdecimal(struct window *win,int x, int y, int size, int dec, unsigned int fgcolor, unsigned int bgcolor)
+{
+	char ch;
+	int i,count;
+	long long temp;
+
+	size &= 0x7;
+	if(size==0)size=1;
+
+	if(dec<0)
+	{
+		printascii(win,x, y, size, '-', fgcolor, bgcolor);
+		x += size*8;
+		dec=-dec;
+	}
+
+	count=0;
+	temp=dec;
+	while(1)
+	{
+		if(temp<10)break;
+		temp=temp/10;
+		count++;
+	}
+
+	for(i=0;i<=count;i++)
+	{
+		ch=(char)(dec%10);
+		if(ch<=9)ch+=0x30;
+		else if(ch<=0xf)ch+=0x37;
+		printascii(win,x+(count-i)*size*8, y, size, ch, fgcolor, bgcolor);
+		dec=dec/10;
+	}
+}
+
+
+
+
+void printhexadecimal(struct window *win,int x, int y, int size, unsigned long long hex, unsigned int fgcolor, unsigned int bgcolor)
+{
+	int i;
+	char ch;
+	unsigned long long temp;
+
+	i=0;
+	temp=hex;
+	size &= 0x7;
+	if(size == 0)size=1;
+
+	while(1)
+	{
+		if(temp<0x10)break;
+		temp=temp>>4;
+		i++;
+	}
+	for(;i>=0;i--)
+	{
+		ch=(char)(hex&0x0000000f);
+		if(ch<=9)ch+=0x30;
+		else if(ch<=0xf)ch+=0x37;
+		printascii(win,x+i*size*8, y, size, ch, fgcolor, bgcolor);
+		hex=hex>>4;
+	}
+}
+
+
+
+
+
+

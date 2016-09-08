@@ -1,16 +1,19 @@
 #ifndef _APP_H
 #define _APP_H
-	
+
+#include "../window/window.h"	
 struct appworld{
 	unsigned int id;
-	void (*init)();
-	void (*uninit)();
-
+	void (*init)(struct window *);
+	void (*uninit)(struct window *);
+	void (*start)(struct window *);
+	int  (*update)(struct window *,int);
 };
 
-void loge(const char *format, ...);
 struct appworld *appworldinit(struct appworld *app);
-void appworlduninit(struct appworld *app);
+void appworldstart(struct window *win,struct appworld *app);
+void appworldchangeapp(struct window *win,struct appworld *app,int appid);
+void appworlduninit(struct window *win,struct appworld *app);
 
 
 

@@ -36,6 +36,14 @@ static int keyboardevent()
 					{
 						return esc_key;
 					}
+					else if(keybuff[0]==0x2b)
+					{
+						return plus_key;
+					}
+					else if(keybuff[0]==0x2d)
+					{
+						return sub_key;
+					}
 					else
 					{
 						return nofun_key;

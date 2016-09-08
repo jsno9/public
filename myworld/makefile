@@ -5,6 +5,8 @@ obj+=event/event.o
 obj+=event/eventepoll.o
 obj+=window/window.o
 obj+=window/windowfb.o
+obj+=app/app.o
+obj+=app/apptest.o
 obj+=draw/draw.o
 
 all:
@@ -12,6 +14,7 @@ all:
 	make -s -C event
 	make -s -C window
 	make -s -C draw
+	make -s -C app
 	gcc -Wall $(obj)
 clean:
 	rm -f *.out *.o
@@ -19,3 +22,4 @@ clean:
 	make -s -C event clean
 	make -s -C window clean
 	make -s -C draw clean
+	make -s -C app clean
