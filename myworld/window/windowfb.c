@@ -36,13 +36,13 @@ static void init(struct window *win)
 		loge("can not get finfo!\n");
 		exit(-1);
 	}
-	loge("window init!\n");
+	//loge("window init!\n");
 	fbaddr=&finfo.smem_start;
 	fbtotalbyte=finfo.smem_len;
 	fboneline=finfo.line_length;
 
-	loge("fbaddr=0x%llx,fbtotalbyte=0x%x,fboneline=0x%x\n"
-		,*fbaddr,fbtotalbyte,fboneline);
+	//loge("fbaddr=0x%llx,fbtotalbyte=0x%x,fboneline=0x%x\n"
+	//	,*fbaddr,fbtotalbyte,fboneline);
 	
 	
 	if(ioctl(fb,FBIOGET_VSCREENINFO,&vinfo))
@@ -54,18 +54,18 @@ static void init(struct window *win)
 	xmax=&vinfo.xres;
 	ymax=&vinfo.yres;
 	bpp=&vinfo.bits_per_pixel;
-	loge("xmax=%d,ymax=%d,bpp=%d\n",*xmax,*ymax,*bpp);
-	loge("xmax=%llx,ymax=%llx,bpp=%llx\n",xmax,ymax,bpp);
+//	loge("xmax=%d,ymax=%d,bpp=%d\n",*xmax,*ymax,*bpp);
+//	loge("xmax=%llx,ymax=%llx,bpp=%llx\n",xmax,ymax,bpp);
 
 	win->width=xmax;
 	win->height=ymax;
 	win->bpp=bpp;
-loge("win->width=%d\n",win->width);
+//loge("win->width=%d\n",win->width);
 }
 
 static void uninit()
 {
-
+	close(fb);
 }
 
 static void windowwrite(struct window *win)

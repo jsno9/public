@@ -6,7 +6,8 @@
 struct epoll_event ev,events;
 static int epollfd,nfds,len;
 static unsigned char keybuff[10]={0};
-
+static unsigned char mousebuff[5]={0};
+static int mousefd;
 static void init()
 {
 	
@@ -16,6 +17,14 @@ static void init()
 
 	epollfd=epoll_create(2);
 	epoll_ctl(epollfd,EPOLL_CTL_ADD,STDIN_FILENO,&ev);
+
+	fd=open("/dev/input/mice",O_RDWR);
+	if(fd<0)
+	{
+		loge("can not open /dev/input/mice\n");
+	}
+	epoll_ctl(epollfd,EPOLL_CTL_ADD,fd,&ev);
+
 }
 
 static void uninit()
@@ -23,11 +32,11 @@ static void uninit()
 	
 }
 
-static int keyboardevent()
+static int keyboardevent(int nfds)
 {
 	unsigned char a;
-	nfds=epoll_wait(epollfd,&events,1,100);
-	if(nfds!=0)
+	
+	if(nfds==1)
 	{
 		len=read(STDIN_FILENO,keybuff,sizeof(keybuff));
 		switch(len)
@@ -89,10 +98,21 @@ static int keyboardevent()
 	
 }
 
+static int mouseevent(int nfds)
+{
+	if(nfds==2)
+	{
+		len=read(STDIN_FILENO,mousebuff,sizeof(mousebuff));
+		
+	}
+}
 
 int epollevent()
 {
-	return keyboardevent();
+	int a;
+	nfds=epoll_wait(epollfd,&events,1,100);
+	a=keyboardevent(nfds);
+	return a;
 }
 
 void epollevent_create(struct event *eve)
