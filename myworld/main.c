@@ -38,6 +38,7 @@ void main()
 	while(1)
 	{
 		type=event->getevent(event);
+		//loge("type=%x\n",type);
 		if(type==exit_event)
 		{
 			break;
@@ -52,7 +53,7 @@ void main()
 	consoleuninit(console);
 	eventuninit(event);
 	windowuninit(window);
-	windowuninit(app);
+	//windowuninit(app);
 	
 	free(console);
 	free(event);
