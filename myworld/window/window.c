@@ -17,6 +17,9 @@ loge("window init \n");
 	winregister[0]=(struct window *)malloc(sizeof(struct window));	
 	winfb_create(winregister[0]);
 
+	winregister[1]=(struct window *)malloc(sizeof(struct window));	
+	winxlib_create(winregister[1]);
+
 	for(i=0;i<WINDOWMEMBER;i++)
 	{
 		

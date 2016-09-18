@@ -22,11 +22,13 @@ static void start(struct window *win)
 	unsigned int x,y,j,k,color,temp;
 	int width,height,bpp;
 	unsigned int* winbuf;
-
+loge("app start 1\n");
 	winbuf=(unsigned int*)(win->screenbuf);
+
 	width=*(win->width);
 	height=*(win->height);
-	bpp=*(win->bpp);	
+loge("app start 1.5\n");
+	//bpp=*(win->bpp);	
 	color=0xff000000;
 
 	for(x=0;x<256;x++)
@@ -44,12 +46,12 @@ static void start(struct window *win)
 		}
 		color=(color&0xffff0000)+(x<<8);	
 	}
-	
+	loge("app start 2\n");
 	temp=winbuf[512*width+512];
 	winbuf[512*width+512]=0xffffffff;
 	rect(win,1256,0,1512,256,temp,temp);	
 	printhexadecimal(win,1256,257,3,temp,0xffffffff,0xff000000);
-
+loge("app start 3\n");
 }
 
 static int update(struct window *win,unsigned int type)

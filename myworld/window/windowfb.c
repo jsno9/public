@@ -23,6 +23,8 @@ __attribute__((aligned(0x1000))) static unsigned char pixbuf[2048*1024*32];
 
 static void init(struct window *win)
 {
+
+	loge("winfb_create\n");
 	fb=open("/dev/fb0",O_RDWR);
 	if(fb<0)
 	{

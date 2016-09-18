@@ -5,6 +5,7 @@ obj+=event/event.o
 obj+=event/eventepoll.o
 obj+=window/window.o
 obj+=window/windowfb.o
+obj+=window/windowxlib.o
 obj+=app/app.o
 obj+=app/apptest.o
 obj+=draw/draw.o
@@ -15,7 +16,7 @@ all:
 	make -s -C window
 	make -s -C draw
 	make -s -C app
-	gcc -Wall $(obj)
+	gcc -Wall -lX11 $(obj)
 clean:
 	rm -f *.out *.o
 	make -s -C console clean

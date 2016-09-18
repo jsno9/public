@@ -1,5 +1,6 @@
 all:
 	gcc -c windowfb.c
+	gcc -c windowxlib.c 
 	gcc -c window.c
 
 clean:
