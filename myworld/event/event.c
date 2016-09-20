@@ -24,12 +24,16 @@ int getevent(struct event *eve)
 
 }
 
-struct event *eventinit(struct event *eve)
+struct event *eventinit(struct event *eve,struct window *win)
 {	
 	
 	int i;
+loge("eventinit 0\n");
 	everegister[0]=(struct event *)malloc(sizeof(struct event));	
 	epollevent_create(everegister[0]);
+	loge("eventinit 0.1\n");
+	everegister[1]=(struct event *)malloc(sizeof(struct event));	
+	xlibevent_create(everegister[1]);	
 
 	for(i=0;i<EVENTMEMBER;i++)
 	{
@@ -41,10 +45,12 @@ struct event *eventinit(struct event *eve)
 		}
 	}
 
-
+loge("eventinit 1\n");
 
 	eve->getevent=getevent;
-	eve->init();
+loge("eventinit 2\n");
+	eve->init(win);
+loge("eventinit 3\n");
 	return eve;
 	
 }

@@ -1,6 +1,8 @@
 #ifndef _EVENT_H
 #define _EVENT_H
 
+#include "../window/window.h"
+
 #define no_event 0xff
 #define exit_event 0x1b
 
@@ -16,14 +18,14 @@
 
 struct event{
 	unsigned int id;
-	void (*init)();
+	void (*init)(struct window *);
 	void (*uninit)();
 	int (*getevent)();
 	int (*subevent)();
 
 };
 
-struct event *eventinit(struct event *eve);
+struct event *eventinit(struct event *eve,struct window *);
 void eventuninit(struct event *eve);
 
 #endif

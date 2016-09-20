@@ -11,7 +11,7 @@ static unsigned char keybuff[10]={0};
 static unsigned char mousebuff[5]={0};
 static int mousefd;
 static int fd[12];
-static void init()
+static void init(struct window *win)
 {
 	int i;
 	char buf[100]={0};

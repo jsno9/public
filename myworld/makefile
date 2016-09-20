@@ -3,6 +3,7 @@ obj+=console/console.o
 obj+=console/consolefb.o
 obj+=event/event.o
 obj+=event/eventepoll.o
+obj+=event/eventxlib.o
 obj+=window/window.o
 obj+=window/windowfb.o
 obj+=window/windowxlib.o

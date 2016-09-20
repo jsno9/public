@@ -1,6 +1,6 @@
 #ifndef _WINDOW_H
 #define _WINDOW_H
-	
+#include <X11/Xlib.h>
 struct window{
 	unsigned int id;
 	void (*init)(struct window *);
@@ -10,6 +10,9 @@ struct window{
 	int* width;
 	int* height;
 	int* bpp;
+	Display* dsp;
+	Visual *visual;
+	XImage* ximage;
 
 };
 
