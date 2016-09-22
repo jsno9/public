@@ -15,7 +15,9 @@ struct appworld *appworldinit(struct appworld *app)
 	int i;
 	appregister[0]=(struct appworld *)malloc(sizeof(struct appworld));	
 	test_create(appregister[0]);
-
+	
+	appregister[1]=(struct appworld *)malloc(sizeof(struct appworld));
+	ox_create(appregister[1]);
 	for(i=0;i<APPWORLDMEMBER;i++)
 	{
 		

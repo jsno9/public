@@ -33,9 +33,10 @@ void main()
 
 	struct appworld *app=NULL;
 	app=(struct appworld *)malloc(sizeof(struct appworld));
-	app->id=1;
+	app->id=2;
 	app=appworldinit(app);
 	appworldstart(window,app);
+	loge("hello app 1\n");
 	while(1)
 	{
 		event->getevent(event);

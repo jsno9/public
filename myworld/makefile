@@ -9,6 +9,7 @@ obj+=window/windowfb.o
 obj+=window/windowxlib.o
 obj+=app/app.o
 obj+=app/apptest.o
+obj+=app/app_ox.o
 obj+=draw/draw.o
 
 all:
