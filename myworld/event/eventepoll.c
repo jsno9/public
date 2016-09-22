@@ -36,7 +36,7 @@ static void uninit()
 	
 }
 
-static int keyboardevent()
+static int keyboardevent(struct event *eve)
 {
 	unsigned char a;
 	
@@ -45,60 +45,75 @@ static int keyboardevent()
 		
 		len=read(STDIN_FILENO,keybuff,sizeof(keybuff));
 		//loge("len=%x\n",len);
+		eve->type=0x02;
 		switch(len)
 		{
 			case 1:if(keybuff[0]==0x1b)
 					{
-						return esc_key;
+						eve->value=esc_key;
+						return;
 					}
 					else if(keybuff[0]==0x2b)
 					{
-						return plus_key;
+						eve->value=plus_key;
+						return;
 					}
 					else if(keybuff[0]==0x2d)
 					{
-						return sub_key;
+						eve->value=sub_key;
+						return;
 					}
 					else
 					{
-						return nofun_key;
+						eve->value=nofun_key;
+						return;
 					}
-			case 2:return nofun_key;
+			case 2:{
+						eve->value=nofun_key;
+						return;
+					}
 			case 3:if(keybuff[0]==0x1b)
 					{
 						if(keybuff[1]==0x5b)
 						{
 							if(keybuff[2]==0x41)
 							{
-								return up_key;
+								eve->value=up_key;
+								return;
 							}
 							else if(keybuff[2]==0x42)
 							{
-								return down_key;
+								eve->value=down_key;
+								return;
 							}
 							else if(keybuff[2]==0x43)
 							{
-								return right_key;
+								eve->value=right_key;
+								return;
 							}
 							else if(keybuff[2]==0x44)
 							{
-								return left_key;
+								eve->value=left_key;
+								return;
 							}
 							else
 							{
-								return nofun_key;
+								eve->value=nofun_key;
+								return;
 							}
 						}
 						else//0x5b
 						{
-							return nofun_key;	
+							eve->value=nofun_key;
+							return;	
 						}
 					}
 					else
 					{
-						return nofun_key;
+						eve->value=nofun_key;
+						return;
 					}
-			default:return nofun_key;
+			default:eve->value=nofun_key;return;
 		}
 	//}
 	
@@ -109,7 +124,7 @@ static int keyboardevent()
 //16~23:左右移动多少位置
 //8~15:01为下移事件，02为上移事件
 //0~7:上下移动位置
-static int mouseevent()
+static int mouseevent(struct event *eve)
 {
 	unsigned int a;
 	int b;
@@ -136,12 +151,14 @@ static int mouseevent()
 		a=(a<<16)|(0x01<<8)|b;
 	}
 loge("%x\n",a);
-	return a;
+	eve->type=0x01;
+	eve->value=a;
+	return;
 	
 	
 }
 
-int epollevent()
+int epollevent(struct event* eve)
 {
 	int i;
 	nfds=epoll_wait(epollfd,events,15,100);
@@ -158,12 +175,14 @@ int epollevent()
 				//loge("%x,%x\n",events[i].data.fd,STDIN_FILENO);
 				if(events[i].data.fd==STDIN_FILENO)
 				{
-					return keyboardevent();
+					keyboardevent(eve);
+					return;
 				}
 				else
 				{
 					//read(events[i].data.fd,&ie,sizeof(struct input_event));
-					return  mouseevent();
+					mouseevent(eve);
+					return;
 				}
 			}
 		}

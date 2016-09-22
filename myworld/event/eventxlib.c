@@ -51,6 +51,8 @@ extern Atom wmDelete;
 static int width;
 static int height;
 static unsigned char* userpixel;
+static int motioncount=0;
+static unsigned int value;
 
 static void init(struct window *win)
 {
@@ -69,8 +71,9 @@ static void uninit()
 
 }
 
-int xlibevent()
+int xlibevent(struct event *eve)
 {
+	unsigned int type;
 	XEvent ev;
 
 	while(1)
@@ -80,15 +83,18 @@ int xlibevent()
 		{
 			if (ev.xexpose.count == 0)
 			{
-				return no_event;
+				eve->type=0xff;
+				eve->value=no_event;
+				return;
 			}
 		}
 		else if(ev.type==ClientMessage)
 		{
 			if (ev.xclient.data.l[0] == wmDelete)
 			{
-				
-				return exit_event;
+				eve->type=0xff;
+				eve->value=exit_event;
+				return;
 			}
 		}
 		else if(ev.type==ConfigureNotify)
@@ -105,8 +111,61 @@ int xlibevent()
 				dsp,visual,24,ZPixmap,0,
 				userpixel,x,y,32,0
 			);
+			eve->type=0xff;
+			eve->value=no_event;
+			return;
+		}
+		else if(ev.type==MotionNotify)
+		{
+			//motioncount = (motioncount+1)%5;
+			//if(motioncount != 0)continue;
+			loge("%d,%d\n",ev.xbutton.x,ev.xbutton.y);
+			value = (ev.xbutton.x<<16)+(ev.xbutton.y);
+			//loge("value=%d\n",value);
+			eve->type=mousemove;
+			eve->value=value;
+			return;
+		}
+		else if(ev.type==ButtonPress)
+		{
+			printf("buttonpress\n");
+			if(ev.xbutton.button==Button4)	//'xyz fron'
+			{
+				printf("buttonpress 1\n");
+				eve->type=middlefront;
+				eve->value=ev.xbutton.y + (ev.xbutton.x<<16);
+				return;
+			}
+			else if(ev.xbutton.button==Button5)	//'xyz down'
+			{
+				printf("buttonpress 2\n");
+				eve->type=middleback;
+				eve->value=ev.xbutton.y + (ev.xbutton.x<<16);
+				return;
+			}
+			else if(ev.xbutton.button==Button1)//left button
+			{
+				printf("buttonpress l\n");
+				eve->type=leftbuttonpress;
+				eve->value=ev.xbutton.y + (ev.xbutton.x<<16);
+				return;
+			}
+			else if(ev.xbutton.button==Button2)//middle button
+			{
+				printf("buttonpress m\n");
+				eve->type=middlebuttonpress;
+				eve->value=ev.xbutton.y + (ev.xbutton.x<<16);
+				return;
+			}
+			else if(ev.xbutton.button==Button3)//right button
+			{
+				printf("buttonpress r\n");
+				eve->type=rightbuttonpress;
+				eve->value=ev.xbutton.y + (ev.xbutton.x<<16);
+				return;
+			}
 
-			return no_event;
+			continue;
 		}
 		
 	}

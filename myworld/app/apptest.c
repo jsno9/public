@@ -54,7 +54,28 @@ loge("app start 1.5\n");
 loge("app start 3\n");
 }
 
-static int update(struct window *win,unsigned int type)
+static void pointrange(int *x,int *y,int xmin,int xmax,int ymin,int ymax)
+{
+	
+	if(*x<=xmin)
+	{
+		*x=xmin;
+	}
+	if(*x>=xmax)
+	{
+		*x=xmax;
+	}
+	if(*y>=ymax)
+	{
+		*y=ymax;
+	}
+	if(*y<=ymin)
+	{
+		*y=ymin;
+	}
+}
+
+static int update(struct window *win,struct event *eve)
 {
 	unsigned int x,y,j,k,pointcolor;
 	static unsigned int color=0xff010000;
@@ -68,103 +89,147 @@ static int update(struct window *win,unsigned int type)
 	height=*(win->height);
 	bpp=*(win->bpp);
 
-	if((type>>24)==0)
+	if(eve->id==1)
 	{
-		switch (type)
+		if(eve->type==0x02)
 		{
-			case plus_key:		
-				if((color&0xffff0000)==0xffff0000)
-				{
+			switch (eve->value)
+			{
+				case plus_key:		
+					if((color&0xffff0000)==0xffff0000)
+					{
 				
-					break;				
-				}
-				color=color+temp;break;
-			case sub_key:	
-				if((color|0xff000000)==0xff000000)
-				{
-					break;				
-				}
-				color=color-temp;break;
-			case down_key:
-				{
-					if(pointy==1023)
+						break;				
+					}
+					color=color+temp;break;
+				case sub_key:	
+					if((color|0xff000000)==0xff000000)
 					{
+						break;				
+					}
+					color=color-temp;break;
+				case down_key:
+					{
+						if(pointy==1023)
+						{
+							break;
+						}
+						pointy++;	
 						break;
 					}
-					pointy++;	
-					break;
-				}
-			case up_key:
-				{
-					if(pointy==0)
+				case up_key:
 					{
+						if(pointy==0)
+						{
+							break;
+						}
+						pointy--;	
 						break;
 					}
-					pointy--;	
-					break;
-				}
-			case left_key:
-				{
-					if(pointx==0)
+				case left_key:
 					{
+						if(pointx==0)
+						{
+							break;
+						}
+						pointx--;	
 						break;
 					}
-					pointx--;	
-					break;
-				}
-			case right_key:
-				{
-					if(pointx==1023)
+				case right_key:
 					{
+						if(pointx==1023)
+						{
+							break;
+						}
+						pointx++;	
 						break;
 					}
-					pointx++;	
-					break;
-				}
-			default :return;
-		}
+				default :return;
+			}
 		
 		
-	}//if
-	else
-	{
-//loge("%x\n",type);
-
-		if(((type>>24)&0xff)==0x01)//鼠标左移
+		}//if
+		else if(eve->type==0x01)
 		{
-			pointx=pointx-((type>>16)&0xff);
-		//	loge("%x\n",pointx);
-			if(pointx<=0)
+			if(((eve->value>>24)&0xff)==0x01)//鼠标左移
 			{
-				pointx=0;
+				pointx=pointx-((eve->value>>16)&0xff);
+				if(pointx<=0)
+				{
+					pointx=0;
+				}
 			}
-		}
-		else if(((type>>24)&0xff)==0x02)//鼠标右移
-		{
-			pointx=pointx+((type>>16)&0xff);
-			if(pointx>=1023)
+			else if(((eve->value>>24)&0xff)==0x02)//鼠标右移
 			{
-				pointx=1023;
+				pointx=pointx+((eve->value>>16)&0xff);
+				if(pointx>=1023)
+				{
+					pointx=1023;
+				}
 			}
-		}
 	
-		if(((type>>8)&0xff)==0x01)//鼠标下移
-		{
-			pointy=pointy+((type)&0xff);
-			if(pointy>=1023)
+			if(((eve->value>>8)&0xff)==0x01)//鼠标下移
 			{
-				pointy=1023;
+				pointy=pointy+((eve->value)&0xff);
+				if(pointy>=1023)
+				{
+					pointy=1023;
+				}
 			}
-		}
-		else if(((type>>8)&0xff)==0x02)//鼠标上移
-		{
-			pointy=pointy-((type)&0xff);
-			if(pointy<=0)
+			else if(((eve->value>>8)&0xff)==0x02)//鼠标上移
 			{
-				pointy=0;
+				pointy=pointy-((eve->value)&0xff);
+				if(pointy<=0)
+				{
+					pointy=0;
+				}
 			}
-		}
 		
+		}
+	}//eventid==1
+	else if(eve->id==2)
+	{
+		loge("id2event=%d\n",eve->type);
+		if(eve->type==mousemove)
+		{
+			
+			pointx=(eve->value>>16)&0xffff;
+			pointy=eve->value&0xffff;
+			pointrange(&pointx,&pointy,0,1023,0,1023);
+			
+		}//eve->type==mousemove
+		else if(eve->type==leftbuttonpress)
+		{
+			pointx=(eve->value>>16)&0xffff;
+			pointy=eve->value&0xffff;
+			pointrange(&pointx,&pointy,0,1023,0,1023);
+		}//eve->type=leftbuttonpress
+		else if(eve->type==leftbuttonrelease)
+		{
+			pointx=(eve->value>>16)&0xffff;
+			pointy=eve->value&0xffff;
+			pointrange(&pointx,&pointy,0,1023,0,1023);
+		}//eve->type=leftbuttonrelease
+		else if(eve->type==middlefront)
+		{
+			loge("mid f\n");
+			if((color&0xffff0000)!=0xffff0000)
+				color=color+temp;
+			pointx=(eve->value>>16)&0xffff;
+			pointy=eve->value&0xffff;
+			pointrange(&pointx,&pointy,0,1023,0,1023);
+			
+		}//eve->type=middlefront
+		else if(eve->type==middleback)
+		{
+			loge("mid b\n");
+			if((color|0xff000000)!=0xff000000)			
+				color=color-temp;
+			pointx=(eve->value>>16)&0xffff;
+			pointy=eve->value&0xffff;
+			pointrange(&pointx,&pointy,0,1023,0,1023);
+		}//eve->type=middleback
+		//loge("haha=%d,%d\n",pointx,pointy);
 	}
 
 	color=color&0xffff0000;

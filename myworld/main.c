@@ -7,7 +7,7 @@
 #include <malloc.h>
 #include "draw/draw.h"
 
-static unsigned int type;
+//static unsigned int value;
 
 void main()
 {
@@ -38,13 +38,13 @@ void main()
 	appworldstart(window,app);
 	while(1)
 	{
-		type=event->getevent(event);
+		event->getevent(event);
 		//loge("type=%x\n",type);
-		if(type==exit_event)
+		if(event->value==exit_event)
 		{
 			break;
 		}
-		app->update(window,type);
+		app->update(window,event);
 		window->write(window);
 		
 

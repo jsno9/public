@@ -8,19 +8,10 @@
 
 static struct event *everegister[EVENTMEMBER];
 
-int getevent(struct event *eve)
+void getevent(struct event *eve)
 {
-	int type;
-	type=eve->subevent();
-	if(type==0xff)
-	{
-		return no_event;	
-	}
-	else
-	{
-		return type;
-	}
-
+	
+	eve->subevent(eve);
 
 }
 
