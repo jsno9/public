@@ -13,7 +13,10 @@ static int scoreo=0;
 
 static void init(struct window *win)
 {
-		
+	int j;
+	scorex=0;
+	scoreo=0;
+	for(j=0;j<9;j++)data[j]=0;	
 }
 
 static void uninit(struct window *win)
@@ -27,15 +30,13 @@ static void start(struct window *win)
 	int width,height,bpp;
 	unsigned int* winbuf;
 	winbuf=(unsigned int*)(win->screenbuf);
-
 	width=*(win->width);
 	height=*(win->height);
 	int min = (width<height) ? width:height;
 
-	scorex=0;
-	scoreo=0;
 	
-	for(j=0;j<9;j++)data[j]=0;
+	
+	
 loge("app_ox start\n");
 	backgroundcolor(win,0);
         line(win,min/16,    min  /  3,      min *15 /16,    min   /   3,    0xffffffff);
@@ -48,6 +49,39 @@ loge("app_ox start\n");
 	
 	printstring(win,1180,512,5,"x:",0xffffffff,0);
 	printstring(win,1180,612,5,"o:",0xffffffff,0);
+
+	for(y=0;y<3;y++)
+	{
+		for(x=0;x<3;x++)
+		{
+			if(data[3*y + x] == 'o')
+			{
+				circleframe(win,
+					(2*x+1)*min/6,
+					(2*y+1)*min/6,
+					min/12,
+					0xff
+				);
+			}
+			else if(data[3*y + x] == 'x')
+			{
+				line(win,
+					(4*x+1)*min/12,
+					(4*y+1)*min/12,
+					(4*x+3)*min/12,
+					(4*y+3)*min/12,
+					0xff0000
+				);
+				line(win,
+					(4*x+3)*min/12,
+					(4*y+1)*min/12,
+					(4*x+1)*min/12,
+					(4*y+3)*min/12,
+					0xff0000
+				);
+			}
+		}//forx
+	}//fory
 }
 
 static void pointrange(int *x,int *y,int xmin,int xmax,int ymin,int ymax)
@@ -99,6 +133,7 @@ static int update(struct window *win,struct event *eve)
 	unsigned int* winbuf;	
 	unsigned int temp=0x00010000;
 	winbuf=(unsigned int*)(win->screenbuf);
+		
 	width=*(win->width);
 	height=*(win->height);
 	bpp=*(win->bpp);

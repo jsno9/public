@@ -11,7 +11,7 @@ obj+=app/app.o
 obj+=app/apptest.o
 obj+=app/app_ox.o
 obj+=draw/draw.o
-
+obj+=draw/draw_menu.o
 all:
 	make -s -C console
 	make -s -C event

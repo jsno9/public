@@ -33,7 +33,7 @@ static char xlib2kbd[0x80]={
 'd','f','g','h',	'j','k','l',';',	//0x20
 '\'','`',0xff,'\\',	'z','x','c','v',
 'b','n','m',',',	'.','/',0xff,'*',	//0x30
-0xff,' ',0xff,0x70,	0x71,0x72,0x73,0x74,
+0xff,' ',0xff,0x50,	0x71,0x72,0x73,0x74,
 0x75,0x76,0x77,0x78,	0x79,0xff,0xff,'7',	//0x40
 '8','9','-','4',	'5','6','+','1',
 '2','3','0','.',	0xff,0xff,0xff,0xff,	//0x50
@@ -167,6 +167,30 @@ int xlibevent(struct event *eve)
 
 			continue;
 		}
+		else if(ev.type==KeyPress)
+		{
+			char temp;
+			//KeyCode keyQ = XKeysymToKeycode(dsp, XStringToKeysym("Q"));
+			//if (ev.xkey.keycode == keyQ)break;
+			//printf("%x\n",ev.xkey.keycode);
+
+			//普通anscii码
+			temp=xlib2anscii[ev.xkey.keycode];
+			
+			if(temp!=0)
+			{
+				eve->type=keyanscii;
+				eve->value=temp;
+				return 1;
+			}
+
+			//控制按键
+			eve->type=keyconctl;
+			eve->value=xlib2kbd[ev.xkey.keycode];
+			loge("%x,%x\n",ev.xkey.keycode,eve->value);
+			return 1;
+		}
+
 		
 	}
 }

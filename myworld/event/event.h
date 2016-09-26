@@ -8,12 +8,15 @@
 
 #define esc_key 0x1b
 #define nofun_key 0xff
+//#define f1_event 0xfe
+
 #define up_key 0x41
 #define down_key 0x42
 #define right_key 0x43
 #define left_key 0x44
 #define plus_key 0x2b
 #define sub_key 0x2d
+#define f1_event 0x50
 
 #define leftbuttonpress 0x01
 #define rightbuttonpress 0x02
@@ -21,6 +24,8 @@
 #define middlefront 0x04
 #define middleback 0x05
 #define mousemove 0x06
+#define keyanscii 0x07
+#define keyconctl 0x08
 
 #define leftbuttonrelease 0x11
 #define rightbuttonrelease 0x12

@@ -12,7 +12,9 @@
 void main()
 {
 	loge("hello world\n");
-
+	int menuflag=0;
+	int menucount=0;	
+	int *appid;
 	struct console *console=NULL;
 	console=(struct console *)malloc(sizeof(struct console));
 	console->id=1;
@@ -45,7 +47,47 @@ void main()
 		{
 			break;
 		}
-		app->update(window,event);
+		
+		if(event->value==f1_event)
+		{
+			if(menucount==0)
+			{
+				menuflag=1;
+				menucount=1;
+			}
+			else if(menucount==1)
+			{
+				menuflag=4;
+				menucount=0;
+			}
+		}
+
+		if(menuflag==1)
+		{
+			call_menu(window);
+			menuflag=2;
+			loge("menu1=%d\n",menuflag);
+		}
+		else if(menuflag==2)
+		{
+			menuflag=menu_update(window,event,appid);
+			loge("menu=%d\n",menuflag);
+		}
+		else if(menuflag==3)
+		{
+			appworldchangeapp(window,app,&appid);
+			call_menu(window);
+		}
+		else if(menuflag==4)
+		{
+			app->start(window);
+			app->update(window,event);
+			menuflag=0;
+		}
+		else
+		{
+			app->update(window,event);
+		}
 		window->write(window);
 		
 

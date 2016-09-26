@@ -189,7 +189,7 @@ static int update(struct window *win,struct event *eve)
 	}//eventid==1
 	else if(eve->id==2)
 	{
-		loge("id2event=%d\n",eve->type);
+		//loge("id2event=%d\n",eve->type);
 		if(eve->type==mousemove)
 		{
 			
