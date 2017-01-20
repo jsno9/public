@@ -1,0 +1,111 @@
+#===============================================================================
+#
+# App Core
+#
+# GENERAL DESCRIPTION
+#    build script
+#
+#
+#-------------------------------------------------------------------------------
+#
+#  $Header: //components/rel/apps.tz/1.0/securemsm/trustzone/qsapps/mytesttz/build/SConscript#1 $
+#  $DateTime: 2015/10/30 10:50:19 $
+#  $Author: pwbldsvc $
+#  $Change: 9325534 $
+#                      EDIT HISTORY FOR FILE
+#
+#  This section contains schedulerents describing changes made to the module.
+#  Notice that changes are listed in reverse chronological order.
+#===============================================================================
+Import('env')
+env = env.Clone()
+
+
+#-------------------------------------------------------------------------------
+# Source PATH
+#-------------------------------------------------------------------------------
+SRCPATH = "${BUILD_ROOT}/apps/securemsm/trustzone/qsapps/mytesttz/src"
+
+env.VariantDir('${BUILDPATH}', SRCPATH, duplicate=0)
+
+#-------------------------------------------------------------------------------
+# Compiler, object, and linker definitions
+#-------------------------------------------------------------------------------
+
+env.RequirePrivateApi('SECUREMSM')
+
+env.RequireRestrictedApi('SMPLSERV')
+env.RequireRestrictedApi('SMPLCERT')
+env.RequireRestrictedApi('BIOMETRIC')
+
+
+INC_PATH = [
+   "${BUILD_ROOT}/apps/securemsm/trustzone/qsapps/mytesttz/src",
+   "${BUILD_ROOT}/apps/securemsm/trustzone/qsapps/mytesttz/inc",
+   "${INC_ROOT}/core/api/boot/qfprom/",
+   "${INC_ROOT}/core/api/services",
+   "${INC_ROOT}/core/api/securemsm/trustzone/qsee",
+   "${INC_ROOT}/core/api/kernel/libstd/stringl",
+   "${INC_ROOT}/core/securemsm/trustzone/qsapps/libs/tee_se_api/inc",
+   "${INC_ROOT}/core/kernel/smmu/v2/inc/",
+   "${INC_ROOT}/core/securemsm/accesscontrol/api",
+   "${INC_ROOT}/apps/securemsm/trustzone/qsapps/tzdrm/tzcommon/common/shared/inc",
+   "${INC_ROOT}/core/securemsm/sse/qsee/SecureUI/inc",
+   "${INC_ROOT}/core/securemsm/sse/qsee/SecureUILib/include",
+   "${INC_ROOT}/core/securemsm/trustzone/qsapps/libs/biometric",
+   "${INC_ROOT}/core/securemsm/trustzone/qsapps/libs/applib/common/src",
+   "${INC_ROOT}/core/securemsm/trustzone/qsapps/libs/biometric/inc",
+]
+
+# Logging APIs
+env.PublishPrivateApi('SSE_LOG_API', [
+   '${INC_ROOT}/core/securemsm/sse/log/inc',
+])
+
+env.PublishPublicApi('BIOMETRIC', [
+   "${INC_ROOT}/core/securemsm/trustzone/qsapps/libs/biometric/inc/",
+])
+
+env.RequireRestrictedApi('BIOMETRIC')
+env.RequirePrivateApi('SECUREMSM')
+
+env.Append(CPPPATH = INC_PATH)
+
+#----------------------------------------------------------------------------
+# App core Objects
+#----------------------------------------------------------------------------
+SOURCES = [
+        '${BUILDPATH}/app_main.c',
+]
+
+#-------------------------------------------------------------------------------
+# Add Libraries to image
+#-------------------------------------------------------------------------------
+env.AddLibrary('MYTESTTZ_IMAGE', '${BUILDPATH}/mytesttz_app', SOURCES)
+
+#-------------------------------------------------------------------------------
+# Add metadata to image
+#-------------------------------------------------------------------------------
+
+md = {
+   'appName':    'mytesttz',
+   'privileges': ['default',
+                  'I2C',
+                  'OEMUnwrapKeys',
+                  'CertValidate',
+                  'SPI',
+                  'TLMM',
+                  'SecureDisplay',
+                  'IntMask',
+                  'OEMBuf',
+                  'TransNSAddr',
+                 ],
+}
+
+
+env.AddSecureAppMetadata('MYTESTTZ_IMAGE', md )
+
+#-------------------------------------------------------------------------------
+# Load sub scripts
+#-------------------------------------------------------------------------------
+env.LoadSoftwareUnits()
