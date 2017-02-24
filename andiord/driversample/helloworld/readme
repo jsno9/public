@@ -1,0 +1,78 @@
+1,在proc下加节点/proc/xxx
+static struct proc_dir_entry *project_id_proc_file;
+project_id_proc_file = proc_create("apid", 0444,NULL, &project_id_proc_ops);
+static struct file_operations project_id_proc_ops = {
+	.open = project_id_proc_open,
+	.read = seq_read,
+	.release = single_release,
+};
+static int project_id_proc_read(struct seq_file *buf, void *v)
+{
+	seq_printf(buf, "%d\n", asus_project_id);
+	return 0;
+}
+static int project_id_proc_open(struct inode *inode, struct  file *file)
+{
+    	return single_open(file, project_id_proc_read, NULL);
+}
+
+2,dev下创建char设备
+static struct class *helloworld_class;
+static int chr_num;
+static ssize_t helloworld_dev_write(struct file *filp, const char __user *buff, size_t len, loff_t *data)
+static long helloworld_dev_ioctl(struct file *file, unsigned int cmd,unsigned long arg)
+static int helloworld_dev_open(struct inode *inode, struct file *filp)
+static ssize_t helloworld_dev_write(struct file *filp, const char __user *buff, size_t len, loff_t *data)
+chr_num = register_chrdev(0,"helloworlddev",&hellowrld_dev_fops);//会注册一个char设备。/proc/devices下会看到，第一个参数为0,随即分配一个charnum，返回值为charnum，如果不为0,则是指定charnum
+helloworld_class = class_create(THIS_MODULE , "helloworldclass");//以下两步会在/dev下产生节点，且会在/sys/class下有文件夹产生
+device_create(helloworld_class, NULL, MKDEV(chr_num, 0),NULL,"helloworld0");
+static const struct file_operations hellowrld_dev_fops = {
+	.owner = THIS_MODULE,
+	.unlocked_ioctl = helloworld_dev_ioctl,
+	.open = helloworld_dev_open,
+	.read	= helloworld_dev_read,
+	.write= helloworld_dev_write,
+};
+
+3,/sys/kernel/下建节点
+static struct kobject *helloworldobj;
+helloworldobj = kobject_create_and_add("helloworld1", kernel_kobj);//注意第二个参数是第一个参数的父节点，如果第二个参数为NULL，则wakeup_reasons建在sys下面及，sys/wakeup_reasons。
+err = sysfs_create_group(helloworldobj, &attr_group);	
+
+static ssize_t helloworld_obj_show(struct kobject *kobj, struct kobj_attribute *attr,char *buf)
+{
+	printk("hello helloworld_obj\n");
+	return 0;
+}
+
+static struct kobj_attribute helloobj = __ATTR_RO(helloworld_obj);//RO表示read属性
+
+
+
+static struct attribute *attrs[] = {
+	&helloobj.attr,
+	NULL
+};
+static struct attribute_group attr_group = {
+	.attrs = attrs,
+};
+
+4,/sys/kernel/debug/下建节点
+struct dentry dir;
+dir = debugfs_create_dir("debughaha", NULL);
+temp = debugfs_create_file("haha", S_IRUSR | S_IWUSR, dir,data, &debug_haha_fops);
+DEFINE_SIMPLE_ATTRIBUTE(debug_haha_fops,debug_haha_get,debug_haha_set, "%lld\n");
+
+5,/sys/module/下节点
+staticintint_var=0;
+module_param(int_var,int,0644);
+MODULE_PARM_DESC(int_var,"A integer variable");
+
+
+
+
+
+
+
+
+
