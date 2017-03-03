@@ -32,7 +32,10 @@ def cli():
 	options = ''.join([
 		key for key, value in arguments.items() if value is True
 	])
-	#print(options)
+	print 'hehe'
+	print(options)
+	print 'haha'
+	print arguments
 	get_data = get_data.GetData(date, from_station, to_station)
 	result = get_data.request_12306()
 	#print result
