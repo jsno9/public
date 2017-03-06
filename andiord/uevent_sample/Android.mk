@@ -1,0 +1,7 @@
+include $(CLEAR_VARS)
+LOCAL_STATIC_LIBRARIES := libcutils
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := uevent.c
+LOCAL_MODULE:= asus_uevent
+LOCAL_MODULE_PATH := $(TARGET_OUT)/bin
+include $(BUILD_EXECUTABLE)
