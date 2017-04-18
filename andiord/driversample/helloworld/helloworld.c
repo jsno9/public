@@ -10,10 +10,45 @@
 #include <linux/kobject.h>
 #include <linux/sysfs.h>
 
+#include "helloworld_notify.h"
+
 static struct proc_dir_entry *helloworld_proc_file;
 static struct class *helloworld_class;
 static int chr_num;
 static struct kobject *helloworldobj;
+
+struct hello_notify_event{
+	void *data;
+};
+
+static int helloworld_chain_callback1(struct notifier_block *nb,unsigned long val, void *data)
+{
+	struct hello_notify_event *event11=data;
+	unsigned int a;
+	a = *(int *)(event11->data);
+	printk("helloworld callback 1\n");
+	printk("val= %ld,a= %d\n",val,a);
+	return 1;
+}
+
+static int helloworld_chain_callback2(struct notifier_block *nb,unsigned long val, void *data)
+{
+	struct hello_notify_event *event12=data;
+	unsigned int a;
+	a = *(int *)(event12->data);
+	printk("helloworld callback 2\n");
+	printk("val= %ld,a= %d\n",val,a);
+	return 1;
+}
+
+static struct notifier_block helloworld_noti_block1 = {
+	.notifier_call = helloworld_chain_callback1,
+};
+
+static struct notifier_block helloworld_noti_block2 = {
+	.notifier_call = helloworld_chain_callback2,
+};
+
 
 static int helloworld_dev_open(struct inode *inode, struct file *filp)
 {
@@ -37,11 +72,15 @@ static ssize_t helloworld_dev_write(struct file *filp, const char __user *buff, 
 {
 	int temp;
 	char messages[256];
+	struct hello_notify_event event1;
+	int a=10;
+	event1.data=&a;
 
 	if(len>256) len=256;
 	if (copy_from_user(messages, buff, len)) return -EFAULT;
 	sscanf(buff,"%d", &temp);
 
+	hello_notifier_call_chain(2,&event1);
 	printk("helloworld_dev_write\n");
 	return len;
 }
@@ -94,6 +133,7 @@ static struct attribute_group attr_group = {
 static int __init helloworld_init(void)
 {
 	int err;	
+	
 	printk("helloworld init start\n");
 	helloworld_proc_file = proc_create("helloworldproc", 0666,NULL, &helloworld_proc_ops);
 
@@ -113,6 +153,10 @@ static int __init helloworld_init(void)
 	helloworldobj = kobject_create_and_add("helloworld1", kernel_kobj);
 	err = sysfs_create_group(helloworldobj, &attr_group);	
 
+	hello_register_client(&helloworld_noti_block1);
+	hello_register_client(&helloworld_noti_block2);
+	
+	
 	printk("helloworld init end\n");
 	return 0;
 }
