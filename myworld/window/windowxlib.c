@@ -14,8 +14,8 @@ static GC gc;
 Atom wmDelete;
 
 //static char* userpixel=0;
-static int width=1920;
-static int height=1080;
+static int width=1366;
+static int height=768;
 static int bpp=32;
 __attribute__((aligned(0x1000))) static unsigned char userpixel[2048*1024*32];
 

@@ -12,13 +12,15 @@ obj+=app/apptest.o
 obj+=app/app_ox.o
 obj+=draw/draw.o
 obj+=draw/draw_menu.o
+
 all:
 	make -s -C console
 	make -s -C event
 	make -s -C window
 	make -s -C draw
 	make -s -C app
-	gcc -Wall -lX11 $(obj)
+	gcc -o a.out $(obj) -Wall -lX11
+	
 clean:
 	rm -f *.out *.o
 	make -s -C console clean

@@ -32,13 +32,13 @@ def cli():
 	options = ''.join([
 		key for key, value in arguments.items() if value is True
 	])
-	print 'hehe'
+	print 'hehe';
 	print(options)
-	print 'haha'
+	print 'haha';
 	print arguments
 	get_data = get_data.GetData(date, from_station, to_station)
 	result = get_data.request_12306()
-	#print result
+	print result
 	#print result
 	if result['httpstatus'] == 200 and result.get('data') is not None and result.get('data') != '':
 		format_result = formats.Formats(result.get('data'), options)

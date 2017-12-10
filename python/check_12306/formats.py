@@ -30,9 +30,10 @@ class Formats(object):
 
 	def myformat_data(self):
 		msg=[]
+		print self.datas
 		for train in self.datas:
 			trains = train.get('queryLeftNewDTO')
-			#print trains
+			print trains
 			if trains is not None and trains != '':
 				msg.append(trains['station_train_code']+' '+trains['from_station_name']+'-'+trains['to_station_name']+' '+trains['start_time']+'-'+trains['arrive_time']+' '+'二等:'+trains['ze_num'])
 		return msg
