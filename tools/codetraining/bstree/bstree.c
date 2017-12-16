@@ -149,7 +149,64 @@ Node* insert_bstree(BSTree tree, int key)
     return bstree_insert(tree,z);
 }
 
+static Node* bstree_delete(BSTree tree, Node *z)
+{
+    Node *x=NULL;
+    Node *y=NULL;
+    
+    if((z->left==NULL) || (z->right==NULL))
+    {
+        y=z;
+    }
+    else
+    {
+        y=bstree_successor(z);
+    }
+
+    if(y->left!=NULL)
+    {
+        x=y->left;
+    }
+    else
+        x=y->right;
+
+    if(x!=NULL)
+        x->parent=y->parent;
+
+    if(y->parent==NULL)
+        tree=x;
+    else if(y==y->parent->left)
+        y->parent->left=x;
+    else
+        y->parent->right=x;
+
+    if(y!=z)
+        z->key=y->key;
+
+    if (y!=NULL)
+        free(y);
+
+    return tree;
+        
+
+}
+
+Node* delete_bstree(BSTree tree,int key)
+{
+    Node *z,*node;
+    z = bstree_search(tree, key);
+    if(z != NULL)
+        bstree_delete(tree,z);
+
+    return tree;
+}
+
 int main()
 {
 
 }
+
+
+
+
+
