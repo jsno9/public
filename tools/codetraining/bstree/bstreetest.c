@@ -286,7 +286,7 @@ void main()
     print_bstree(root, root->key, 0);
 
     printf("\n== 删除根节点: %d", arr[3]);
-    root = delete_key(root, 7);
+    root = delete_key(root, 3);
 
     printf("\n== 中序遍历: ");
     inorder(root);
