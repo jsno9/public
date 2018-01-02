@@ -5,7 +5,7 @@ typedef struct node{
     int key;
     struct node *left;
     struct node *right;
-    int height
+    int height;
 }Node,Tree;
 
 static Node *creat_node(int key,Node *left,Node *right)
@@ -22,7 +22,7 @@ static Node *creat_node(int key,Node *left,Node *right)
 }
 
 int heighttree(Node *p)
-{
+{   
     if(p==NULL)
         return 0;
     return p->height;
@@ -116,6 +116,34 @@ Node *insert_node(Node *tree,int key)
 
 }
 
+static Node *maximum_node(Node *p)
+{
+    if(p==NULL)
+        return NULL;
+    
+    while(p->right!=NULL)
+    {
+        p=p->right;
+    }
+    
+    return p;
+    
+}
+
+static Node *minimum_node(Node *p)
+{
+    if(p==NULL)
+        return NULL;
+    
+    while(p->left!=NULL)
+    {
+        p=p->left;
+    }
+    
+    return p;
+    
+}
+
 Node *delete_node(Node *tree,Node *p)
 {
     if(tree==NULL || p==NULL)
@@ -126,7 +154,7 @@ Node *delete_node(Node *tree,Node *p)
         tree->left = delete_node(tree->left,p);     
         if(heighttree(tree->right)-heighttree(tree->left) == 2)
         {
-            if(key>tree->right->key)
+            if(p->key>tree->right->key)
                 tree=right_right_rotation(tree);
             else
                 tree=right_left_rotation(tree);
@@ -137,7 +165,7 @@ Node *delete_node(Node *tree,Node *p)
         tree->right = delete_node(tree->right,p);
         if(heighttree(tree->left)-heighttree(tree->right) == 2)
         {
-            if(key<tree->left->key)
+            if(p->key<tree->left->key)
                 tree=left_left_rotation(tree);
             else
                 tree=left_right_rotation(tree);
@@ -148,16 +176,113 @@ Node *delete_node(Node *tree,Node *p)
         if((tree->left != NULL) && (tree->right != NULL))
         {
             if(heighttree(tree->left)>heighttree(tree->right))
-            //Node *max=
+            {
+                Node *max=maximum_node(tree->left);
+                tree->key=max->key;
+                tree->left=delete_node(tree->left,max);
+            }
+            else
+            {
+                Node *min=minimum_node(tree->right);
+                tree->key=min->key;
+                tree->right=delete_node(tree->right,min);
+            }
+        }
+        else
+        {
+            if(tree->left!=NULL)
+            {
+                free(tree->left);
+            }
+            else
+                free(tree->right);
         }
     }
 
+    return tree;
 }
 
+static Node *search_key(Node *tree,int key)
+{
+    if(tree==NULL)
+        return NULL;
+    
+    if(key<tree->key)
+        search_key(tree->left,key);
+    else if(key>tree->key)
+        search_key(tree->right,key);
+    
+    return tree;
+}
+
+Node *delete_key(Node *tree,int key)
+{
+    Node *p=search_key(tree,key);
+    if(p!=NULL)
+        tree=delete_node(tree,p);
+    
+    return tree;
+}
+
+void print_tree(Node *tree, int key, int direction)
+{
+    if(tree != NULL)
+    {
+        if(direction==0)    // tree是根节点
+            printf("%2d is root\n", tree->key);
+        else                // tree是分支节点
+            printf("%2d is %2d's %6s child\n", tree->key, key, direction==1?"right" : "left");
+
+        print_tree(tree->left, tree->key, -1);
+        print_tree(tree->right,tree->key,  1);
+    }
+}
+
+#define TBL_SIZE(a) ( (sizeof(a)) / (sizeof(a[0])) )
+void main()
+{
+    static int arr[]= {3,2,1,4,5,6,7,16,15,14,13,12,11,10,8,9};
+
+    int i,ilen;
+    Node *root=NULL;
+
+    printf("== 高度: %d\n", heighttree(root));
+    printf("== 依次添加: ");
+    ilen = TBL_SIZE(arr);
+    for(i=0; i<ilen; i++)
+    {
+        printf("%d ", arr[i]);
+        root = insert_node(root, arr[i]);
+    }
+/*
+    printf("\n== 前序遍历: ");
+    preorder_avltree(root);
+
+    printf("\n== 中序遍历: ");
+    inorder_avltree(root);
+
+    printf("\n== 后序遍历: ");
+    postorder_avltree(root);
+    printf("\n");
+*/
+    printf("== 高度: %d\n", heighttree(root));
+    printf("== 最小值: %d\n", minimum_node(root)->key);
+    printf("== 最大值: %d\n", maximum_node(root)->key);
+    printf("== 树的详细信息: \n");
+    print_tree(root, root->key, 0);
 
 
+    i = 8;
+    printf("\n== 删除根节点: %d", i);
+    root = delete_key(root, i);
 
+    printf("\n== 高度: %d", heighttree(root));
+    printf("\n== 中序遍历: ");
+//    inorder_avltree(root);
+    printf("\n== 树的详细信息: \n");
+    print_tree(root, root->key, 0);
 
+}
 
 
 
