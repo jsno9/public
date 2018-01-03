@@ -8,7 +8,7 @@ typedef struct node{
     int height;
 }Node,Tree;
 
-static Node *creat_node(int key,Node *left,Node *right)
+static Node *create_node(int key,Node *left,Node *right)
 {
     Node *p=(Node *)malloc(sizeof(Node));
     if(p==NULL)
@@ -73,7 +73,7 @@ static Node *left_right_rotation(Node *p)
 
 static Node *right_left_rotation(Node *p)
 {
-	p->left=left_left_rotation(p->left);
+	p->right=left_left_rotation(p->right);
 
 	return right_right_rotation(p);
 }
@@ -82,7 +82,7 @@ Node *insert_node(Node *tree,int key)
 {
 	if(tree==NULL)
 	{
-        tree = creat_node(key,NULL,NULL);
+        tree = create_node(key,NULL,NULL);
 	}
     else if(key<tree->key)
     {
@@ -101,9 +101,14 @@ Node *insert_node(Node *tree,int key)
         if(heighttree(tree->right)-heighttree(tree->left) == 2)
         {
             if(key>tree->right->key)
+            {
                 tree=right_right_rotation(tree);
+                
+            }
             else
+            {
                 tree=right_left_rotation(tree);
+            }
         }
     }
     else
@@ -112,6 +117,7 @@ Node *insert_node(Node *tree,int key)
     }
 
     tree->height=1+max(heighttree(tree->right),heighttree(tree->left));
+    return tree;
 	
 
 }
@@ -226,6 +232,7 @@ Node *delete_key(Node *tree,int key)
 
 void print_tree(Node *tree, int key, int direction)
 {
+    //printf("print tree\n");
     if(tree != NULL)
     {
         if(direction==0)    // tree是根节点
@@ -238,6 +245,36 @@ void print_tree(Node *tree, int key, int direction)
     }
 }
 
+void preorder_tree(Node *tree)
+{
+    if(tree!=NULL)
+    {
+        printf("%d ",tree->key);
+        preorder_tree(tree->left);
+        preorder_tree(tree->right);
+    }
+}
+
+void inorder_tree(Node *tree)
+{
+    if(tree!=NULL)
+    {
+        inorder_tree(tree->left);
+        printf("%d ",tree->key);
+        inorder_tree(tree->right);
+    }
+}
+
+void postorder_tree(Node *tree)
+{
+    if(tree!=NULL)
+    {
+        postorder_tree(tree->left);
+        postorder_tree(tree->right);
+        printf("%d ",tree->key);
+    }
+}
+
 #define TBL_SIZE(a) ( (sizeof(a)) / (sizeof(a[0])) )
 void main()
 {
@@ -247,24 +284,27 @@ void main()
     Node *root=NULL;
 
     printf("== 高度: %d\n", heighttree(root));
+    //printf("main\n");
     printf("== 依次添加: ");
     ilen = TBL_SIZE(arr);
     for(i=0; i<ilen; i++)
     {
         printf("%d ", arr[i]);
+        
         root = insert_node(root, arr[i]);
+      //  print_tree(root, root->key, 0);
     }
-/*
+
     printf("\n== 前序遍历: ");
-    preorder_avltree(root);
+    preorder_tree(root);
 
     printf("\n== 中序遍历: ");
-    inorder_avltree(root);
+    inorder_tree(root);
 
     printf("\n== 后序遍历: ");
-    postorder_avltree(root);
+    postorder_tree(root);
     printf("\n");
-*/
+
     printf("== 高度: %d\n", heighttree(root));
     printf("== 最小值: %d\n", minimum_node(root)->key);
     printf("== 最大值: %d\n", maximum_node(root)->key);
